@@ -1,12 +1,14 @@
 import profileLoader
 
 def PrintStats(profiles, symbolName):
-  symbolStats = {};
+  symbolStats = [];
   for profile in profiles:
     symbolId = profileLoader.FindSymbolID(profile, symbolName)
     symbolDuration = profileLoader.CalculateCost(profile, symbolId)
-    symbolStats[profile['file']] = {}
-    symbolStats[profile['file']]["duration"] = symbolDuration
+    funcStat = {};
+    funcStat['file'] = profile['file']
+    funcStat['duration'] = symbolDuration
+    symbolStats.append(funcStat)
 
   return symbolStats
 
