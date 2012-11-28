@@ -2,6 +2,20 @@ import json
 import cPickle
 import os
 
+def GetProfiles():
+  dirList = os.listdir("../profiles/")
+  profiles = [];
+  for fname in dirList:
+    if fname.endswith(".prof"):
+      profile = LoadProfile(os.path.join("../profiles/", fname))
+
+      if profile["format"] != "profileJSONWithSymbolicationTable,1":
+        raise BaseException("Format not supported") 
+
+      profiles.append(profile)
+
+  return profiles
+
 def LoadProfile(path_str):
 
   cache_path_str = path_str + ".cache"
@@ -17,7 +31,20 @@ def LoadProfile(path_str):
   FILE = open(cache_path_str, 'r')
   data = cPickle.load(FILE)
 
+  data["file"] = path_str
+
   return data
+
+def CalculateCost(profile, symbol_id):
+  c = 0
+  samples = profile["profileJSON"]
+  for sample in samples:
+    for frame in sample["frames"]:
+      if frame == symbol_id:
+        c = c + 1
+        break;
+
+  return c
 
 def GetProfileDuration(profile):
   return profile["meta"]["interval"] * len(profile["profileJSON"])
@@ -31,7 +58,7 @@ def FindSymbolID(profile, symbol_name):
   return None
 
 def SymbolName(profile, symbol_id):
-  return profile['symbolicationTable'][str(symbol_id)]
+  return profile['symbolicationTable'][str(symbol_id)].split(" + ")[0]
 
 # Inflection points are defined as points in the profile tree that
 # describe a non trivial number of samples that branch into 2 or more
@@ -70,10 +97,13 @@ def FindInflectionPoints(profile):
       if j >= len(currentState) or currentState[j][0] != frames[j]:
         if j > 0 and j < len(currentState) and currentState[j][1] > 5:
           # We have an expensive subtree
+          #print SymbolName(profile, currentState[j][0]) 
           currentState[j-1][2] = currentState[j-1][2] + 1
-          if currentState[j-1][2] > 1:
+          if currentState[j-1][2] > 0:
             #print ("\\" * j) + SymbolName(profile, currentState[j-1][0])
-            print SymbolName(profile, currentState[j-1][0])
+            inflectionPoints.append([currentState[j][0], frames[j]])
+            print SymbolName(profile, currentState[j-1][0]) + " -> " + SymbolName(profile, currentState[j][0])
+            print SymbolName(profile, currentState[j-1][0]) + " -> " + SymbolName(profile, frames[j])
         currentState = currentState[0:j]
         for k in range(j, len(frames)):
           currentState.append([frames[k], 1, 0])
