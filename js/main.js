@@ -59,16 +59,63 @@ function displayFunction(stats, data, funcName) {
 
   var funcContainer = document.createElement("div");
   funcContainer.className = "functionDiv";
-  funcContainer.appendChild(createCanvas(stats, data, funcName));
+  var canvasData = createCanvas(stats, data, funcName);
+  funcContainer.appendChild(canvasData.container);
   for (var profileName in data) {
     var profileDiv = document.createElement("div");
-    profileDiv.textContent = data[profileName].file + " -> " + data[profileName].duration + "ms";
-    //profileDiv.textContent = JSON.stringify(data);
+    profileDiv.profileName = profileName;
+    profileDiv.data = data[profileName];
+    profileDiv.textContent = profileDiv.data.file + " -> " + profileDiv.data.duration + "ms";
+    profileDiv.onmouseover = function() {
+      updateCanvas(canvasData.canvas, stats, data, funcName, this.profileName);
+    }
+    profileDiv.onmouseout = function() {
+      updateCanvas(canvasData.canvas, stats, data, funcName);
+    }
     funcContainer.appendChild(profileDiv);
   }
   container.appendChild(funcContainer);
 
   return container;
+}
+
+function updateCanvas(canvas, stats, data, funcName, selected) {
+  canvas.width = 300;
+  canvas.height = 30;
+
+  var labelsHeight = 10;
+  var ctx = canvas.getContext("2d");
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'black';
+  ctx.fillStyle = 'green';
+  var radius = 2;
+  for (var profileName in data) {
+    var duration = data[profileName].duration;
+    ctx.beginPath();
+    ctx.arc(duration, canvas.height/2 + labelsHeight/2, radius, 0, 2 * Math.PI, false);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fill();
+  }
+  ctx.fillStyle = 'blue';
+  if (selected != null) {
+    var duration = data[selected].duration;
+    ctx.beginPath();
+    ctx.arc(duration, canvas.height/2 + labelsHeight/2, radius, 0, 2 * Math.PI, false);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fill();
+
+  }
+  ctx.strokeStyle = '#cccccc';
+  ctx.fillStyle = 'black';
+  for (var i = 0; i < stats.maxTime; i += 25) {
+    ctx.fillText(i, i-5, labelsHeight);
+    ctx.beginPath();
+    ctx.moveTo(i, 10);
+    ctx.lineTo(i, canvas.height);
+    ctx.stroke();
+  }
 }
 
 function createCanvas(stats, data, funcName) {
@@ -77,31 +124,14 @@ function createCanvas(stats, data, funcName) {
   var lblMin = document.createTextNode("0 ms");
   var lblMax = document.createTextNode(stats.maxTime + " ms");
   var canvas = document.createElement("canvas");
-  canvas.width = 300;
-  canvas.height = 15;
-
-  var ctx = canvas.getContext("2d");
-  ctx.lineWidth = 1;
-  for (var i = 0; i < stats.maxTime; i += 10) {
-    ctx.beginPath();
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i, canvas.height);
-    ctx.stroke();
-  }
-  for (var profileName in data) {
-    var duration = data[profileName].duration;
-    var radius = 3;
-    ctx.beginPath();
-    ctx.arc(duration, canvas.height/2, radius, 0, 2 * Math.PI, false);
-    ctx.closePath();
-    ctx.fillStyle = 'black';
-    ctx.stroke();
-    ctx.fillStyle = 'green';
-    ctx.fill();
-  }
+  updateCanvas(canvas, stats, data, funcName);
 
   container.appendChild(lblMin);
   container.appendChild(canvas);
   container.appendChild(lblMax);
-  return container;
+  return {
+    container: container,
+    canvas: canvas,
+  };
 }
+
