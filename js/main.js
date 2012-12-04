@@ -85,7 +85,11 @@ function displayFunction(stats, data, funcName) {
   var container = document.createElement("div");
   
   var title = document.createElement("h2");
-  title.textContent = funcName;
+  var titleLink = document.createElement("a");
+  titleLink.textContent = funcName;
+  titleLink.id = funcName
+  titleLink.href = "#" + funcName;
+  title.appendChild(titleLink);
   container.appendChild(title);
 
   var funcContainer = document.createElement("div");

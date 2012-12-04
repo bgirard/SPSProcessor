@@ -3,12 +3,12 @@ import cPickle
 import os
 import sys
 
-def GetProfiles():
-  dirList = os.listdir("../profiles/")
+def GetProfiles(subfolder="startup"):
+  dirList = os.listdir("../profiles/" + subfolder)
   profiles = [];
   for fname in dirList:
     if fname.endswith(".prof"):
-      profile = LoadProfile(os.path.join("../profiles/", fname))
+      profile = LoadProfile(os.path.join("../profiles/" + subfolder, fname))
 
       if profile["format"] != "profileJSONWithSymbolicationTable,1":
         raise BaseException("Format not supported") 
@@ -35,6 +35,32 @@ def LoadProfile(path_str):
   data["file"] = path_str
 
   return data
+
+def SaveProfile(profile):
+  path_str = profile["file"]
+  cache_path_str = path_str + ".cache"
+
+  with io.open(path_str, 'w') as outfile:
+    data = json.dump(profile, outfile)
+
+  FILE = open(cache_path_str, 'w')
+  cPickle.dump(data, FILE)
+
+
+def TruncateBeforeMarker(profile, markerName):
+  c = 0
+  samples = profile["profileJSON"]
+  for sample in samples:
+    if sample['extraInfo'] and "marker" in sample['extraInfo']:
+      for markerInSample in sample['extraInfo']['marker']:
+        if markerInSample == markerName and c > 0:
+          del samples[:c]
+          TruncateBeforeMarker(profile, markerName)
+          return
+    c = c + 1
+
+def ProfileLength(profile):
+  return len(profile["profileJSON"])
 
 def CalculateCost(profile, symbol_ids):
   c = 0
