@@ -84,7 +84,7 @@ def GetProfileDuration(profile):
 def FindSymbolID(profile, symbol_name):
   symbolTable = profile['symbolicationTable'];
   for k, v in symbolTable.iteritems():
-    if v.startswith(symbol_name):
+    if v.find(symbol_name) != -1:
       #sys.stderr.write(v + "\n")
       return int(k)
   #print symbol_name + " not found."
@@ -94,7 +94,7 @@ def FindSymbolIDs(profile, symbol_name):
   symbolTable = profile['symbolicationTable'];
   symbolIDs = []
   for k, v in symbolTable.iteritems():
-    if v.startswith(symbol_name):
+    if v.find(symbol_name) != -1:
       symbolIDs.append(int(k))
       #sys.stderr.write(v + "\n")
   return symbolIDs

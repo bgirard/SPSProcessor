@@ -74,14 +74,14 @@ function displayFunctions(stats, data) {
   });
   for (var funcId in functionOrder) {
     var funcName = functionOrder[funcId].functionName;
-    var elem = displayFunction(stats, data[funcName].stats, funcName);
+    var elem = displayFunction(stats, data[funcName].stats, funcName, data[funcName].bugs);
     container.appendChild(elem);
   }
 
   return container;
 }
 
-function displayFunction(stats, data, funcName) {
+function displayFunction(stats, data, funcName, bugs) {
   var container = document.createElement("div");
   
   var title = document.createElement("h2");
@@ -91,6 +91,13 @@ function displayFunction(stats, data, funcName) {
   titleLink.href = "#" + funcName;
   title.appendChild(titleLink);
   container.appendChild(title);
+
+  for (var bugId in bugs) {
+    var bugLink = document.createElement("a");
+    bugLink.textContent = bugs[bugId][0];
+    bugLink.href = bugs[bugId][1];
+    container.appendChild(bugLink);
+  }
 
   var funcContainer = document.createElement("div");
   funcContainer.className = "functionDiv";

@@ -7,8 +7,8 @@ startupData = {}
 shutdownData = {}
 sequenceId = 0
 
-def ComputeFunctionStats(startupData, id, profiles, functionName, lookFor):
-  startupData[functionName] = { "sequence": id, "stats": functionStat.PrintStats(profiles, lookFor) }
+def ComputeFunctionStats(startupData, id, profiles, functionName, lookFor, bugs=None):
+  startupData[functionName] = { "sequence": id, "stats": functionStat.PrintStats(profiles, lookFor), "bugs": bugs }
 
 startupProfiles = profileLoader.GetProfiles("startup");
 shutdownProfiles = profileLoader.GetProfiles("shutdown");
@@ -32,7 +32,10 @@ ComputeFunctionStats(startupData, 10, startupProfiles, "BuildFontList", "gfxFont
 ComputeFunctionStats(startupData, 11, startupProfiles, "layout::Flush", "layout::Flush")
 
 ComputeFunctionStats(shutdownData, 0, shutdownProfiles, "Total", "")
-ComputeFunctionStats(shutdownData, 1, shutdownProfiles, "PluginInstanceParent::Destroy", "mozilla::plugins::PluginInstanceParent::Destroy")
+ComputeFunctionStats(shutdownData, 1, shutdownProfiles, "PluginInstanceParent::Destroy", "mozilla::plugins::PluginInstanceParent::Destroy",
+                     [["Bug 818265 - [Shutdown] Plug-in shutdown takes ~90ms on shutdown" ,"https://bugzilla.mozilla.org/show_bug.cgi?id=818265"]])
+ComputeFunctionStats(shutdownData, 1, shutdownProfiles, "TelemetryPing.js", "TelemetryPing.js",
+                     [["Bug 818274 - [Shutdown] Telemetry takes ~10ms on shutdown" ,"https://bugzilla.mozilla.org/show_bug.cgi?id=818274"]])
 ComputeFunctionStats(shutdownData, 2, shutdownProfiles, "IncrementalCollectSlice", "IncrementalCollectSlice")
 ComputeFunctionStats(shutdownData, 3, shutdownProfiles, "nsCycleCollector::BeginCollection", "nsCycleCollector::BeginCollection")
 ComputeFunctionStats(shutdownData, 4, shutdownProfiles, "nsCycleCollector::FinishCollection", "nsCycleCollector::FinishCollection")
