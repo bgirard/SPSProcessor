@@ -36,6 +36,8 @@ ComputeFunctionStats(shutdownData, 1, shutdownProfiles, "PluginInstanceParent::D
                      [["Bug 818265 - [Shutdown] Plug-in shutdown takes ~90ms on shutdown" ,"https://bugzilla.mozilla.org/show_bug.cgi?id=818265"]])
 ComputeFunctionStats(shutdownData, 1, shutdownProfiles, "TelemetryPing.js", "TelemetryPing.js",
                      [["Bug 818274 - [Shutdown] Telemetry takes ~10ms on shutdown" ,"https://bugzilla.mozilla.org/show_bug.cgi?id=818274"]])
+ComputeFunctionStats(shutdownData, 1, shutdownProfiles, "js::NukeCrossCompartmentWrappers", "js::NukeCrossCompartmentWrappers",
+                     [["Bug 818296 - [Shutdown] js::NukeCrossCompartmentWrappers takes up 300ms on shutdown" ,"https://bugzilla.mozilla.org/show_bug.cgi?id=818296"]])
 ComputeFunctionStats(shutdownData, 2, shutdownProfiles, "IncrementalCollectSlice", "IncrementalCollectSlice")
 ComputeFunctionStats(shutdownData, 3, shutdownProfiles, "nsCycleCollector::BeginCollection", "nsCycleCollector::BeginCollection")
 ComputeFunctionStats(shutdownData, 4, shutdownProfiles, "nsCycleCollector::FinishCollection", "nsCycleCollector::FinishCollection")
