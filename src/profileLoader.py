@@ -1,6 +1,7 @@
 import json
 import cPickle
 import os
+import sys
 
 def GetProfiles():
   dirList = os.listdir("../profiles/")
@@ -35,13 +36,18 @@ def LoadProfile(path_str):
 
   return data
 
-def CalculateCost(profile, symbol_id):
+def CalculateCost(profile, symbol_ids):
   c = 0
   samples = profile["profileJSON"]
   for sample in samples:
     for frame in sample["frames"]:
-      if frame == symbol_id:
-        c = c + 1
+      foundSample = False
+      for symbol_id in symbol_ids:
+        if frame == symbol_id:
+          c = c + 1
+          foundSample = True
+          break;
+      if foundSample:
         break;
 
   return c
@@ -53,9 +59,19 @@ def FindSymbolID(profile, symbol_name):
   symbolTable = profile['symbolicationTable'];
   for k, v in symbolTable.iteritems():
     if v.startswith(symbol_name):
+      #sys.stderr.write(v + "\n")
       return int(k)
-  print symbol_name + " not found."
+  #print symbol_name + " not found."
   return None
+
+def FindSymbolIDs(profile, symbol_name):
+  symbolTable = profile['symbolicationTable'];
+  symbolIDs = []
+  for k, v in symbolTable.iteritems():
+    if v.startswith(symbol_name):
+      symbolIDs.append(int(k))
+      #sys.stderr.write(v + "\n")
+  return symbolIDs
 
 def SymbolName(profile, symbol_id):
   return profile['symbolicationTable'][str(symbol_id)].split(" + ")[0]

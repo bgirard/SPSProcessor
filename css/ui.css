@@ -4,3 +4,18 @@
 .functionDiv {
   padding-left: 20px;
 }
+#leftSide {
+  float: left;
+  width: 500px;
+}
+#rightSide {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  left: 500px;
+  bottom: 0px;
+}
+iframe {
+  width: 100%;
+  height: 100%;
+}
