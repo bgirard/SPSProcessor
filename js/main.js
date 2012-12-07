@@ -167,9 +167,14 @@ function updateCanvas(canvas, stats, data, funcName, selected) {
   }
   ctx.strokeStyle = '#cccccc';
   ctx.fillStyle = 'black';
+  var lastX = -1000;
   for (var i = 0; i < totalTime; i += 100) {
     var x = i*canvas.width/totalTime;
-    ctx.fillText(i, x-5, labelsHeight);
+    if (lastX + 29 <= x-5) {
+      // Don't put the text to close to each other
+      ctx.fillText(i, x-5, labelsHeight);
+      lastX = x-5;
+    }
     ctx.beginPath();
     ctx.moveTo(x, 10);
     ctx.lineTo(x, canvas.height);

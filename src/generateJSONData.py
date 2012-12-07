@@ -43,7 +43,8 @@ ComputeFunctionStats(shutdownData, 3, shutdownProfiles, "nsCycleCollector::Begin
 ComputeFunctionStats(shutdownData, 4, shutdownProfiles, "nsCycleCollector::FinishCollection", "nsCycleCollector::FinishCollection")
 ComputeFunctionStats(shutdownData, 5, shutdownProfiles, "PresShell::Destroy", "PresShell::Destroy")
 ComputeFunctionStats(shutdownData, 6, shutdownProfiles, "nsSHistory::EvictAllContentViewers", "nsSHistory::EvictAllContentViewers")
-ComputeFunctionStats(shutdownData, 7, shutdownProfiles, "nsCSSStyleSheet::~nsCSSStyleSheet", "nsCSSStyleSheet::~nsCSSStyleSheet")
+ComputeFunctionStats(shutdownData, 7, shutdownProfiles, "nsCSSStyleSheet::~nsCSSStyleSheet", "nsCSSStyleSheet::~nsCSSStyleSheet",
+                     [["Bug 819489 - [Shutdown] Style sheet take ~50ms to release during shutdown", "https://bugzilla.mozilla.org/show_bug.cgi?id=819489"]])
 
 #startupData["AMP_startup"] = functionStat.PrintStats(startupProfiles, "AMP_startup (")
 #startupData["ssi_onLoad"] = functionStat.PrintStats(startupProfiles, "ssi_onLoad (")
